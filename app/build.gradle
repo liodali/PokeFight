@@ -4,7 +4,10 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
 }
-
+Properties properties = new Properties()
+if (rootProject.file("local.properties").exists()) {
+    properties.load(rootProject.file("local.properties").newDataInputStream())
+}
 android {
     compileSdk 30
     buildToolsVersion "30.0.3"
@@ -24,6 +27,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+
+            //resValue 'string', 'serverUrl', '"https://planets.datenkollektiv.de/planets/"'
+        }
+        debug {
+            resValue 'string', 'serverUrl',  properties.getProperty("serverUrl", "")
+            resValue 'string', 'tokenEmail', properties.getProperty("tokenEmail", "")
         }
     }
     compileOptions {
@@ -58,7 +68,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     //map
-    implementation " 'org.osmdroid:osmdroid-android::6.1.10"
+    implementation "org.osmdroid:osmdroid-android:6.1.10"
 
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
