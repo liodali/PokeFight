@@ -1,4 +1,4 @@
-package com.example.pokemongofight
+package dali.hamza.pokemongofight
 
 import org.junit.Test
 

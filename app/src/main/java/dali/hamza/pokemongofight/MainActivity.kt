@@ -1,4 +1,4 @@
-package com.example.pokemongofight
+package dali.hamza.pokemongofight
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
