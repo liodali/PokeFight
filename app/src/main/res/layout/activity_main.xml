@@ -9,13 +9,15 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="@android:color/transparent"
+        app:elevation="8dp"
         android:fitsSystemWindows="true">
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/idm_main_tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             app:tabMode="scrollable"
+
             app:tabIndicatorHeight="0dp"
             app:tabIndicatorFullWidth="false"
             app:tabInlineLabel="true"
@@ -27,22 +29,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_label_explore"
+                android:layout="@layout/poke_tab_item"
                 />
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_label_community"
+                android:layout="@layout/poke_tab_item"
 
                 />
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_label_my_team"
+                android:layout="@layout/poke_tab_item"
+
                 />
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_label_captured"
+                android:layout="@layout/poke_tab_item"
+
                 />
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
