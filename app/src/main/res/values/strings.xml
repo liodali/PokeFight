@@ -2,4 +2,15 @@
     <string name="app_name">PokemonGOFight</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_label_captured">Captured</string>
+    <string name="text_label_my_team">My Team</string>
+    <string name="text_label_community">Community</string>
+    <string name="text_label_explore">Explore</string>
+
+    <string-array name="tabs_names">
+        <item>@string/text_label_explore</item>
+        <item>@string/text_label_community</item>
+        <item>@string/text_label_my_team</item>
+        <item>@string/text_label_captured</item>
+    </string-array>
 </resources>
