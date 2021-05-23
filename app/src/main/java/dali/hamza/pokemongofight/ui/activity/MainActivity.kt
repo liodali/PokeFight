@@ -3,6 +3,7 @@ package dali.hamza.pokemongofight.ui.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -65,9 +66,6 @@ class MainActivity : AppCompatActivity() {
         rootPager.registerOnPageChangeCallback(pagerCallback)
 
         rootPager.currentItem = selectedIndex
-
-
-
     }
 
     override fun onDestroy() {
