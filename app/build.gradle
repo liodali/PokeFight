@@ -77,10 +77,6 @@ dependencies {
     //paging
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 
-    //nav-simple-stack
-    implementation 'com.github.Zhuinden:simple-stack:2.6.1'
-    implementation 'com.github.Zhuinden:simple-stack-extensions:2.2.1'
-
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.8.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.6.0'
@@ -88,6 +84,12 @@ dependencies {
 
     //picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //Preference
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+
+    //lazy&lifecycleAware initialisation dependencies
+    implementation "com.github.skydoves:lazybones:1.0.2"
 
 
     //room
