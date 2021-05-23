@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 import dali.hamza.pokemongofight.R
 import dali.hamza.pokemongofight.databinding.ActivityMainBinding
 import dali.hamza.pokemongofight.ui.adapter.MainPagerAdapter
@@ -14,6 +15,7 @@ import dali.hamza.pokemongofight.ui.fragment.CommunityFragment
 import dali.hamza.pokemongofight.ui.fragment.ExploreFragment
 import dali.hamza.pokemongofight.ui.fragment.MyTeamFragment
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     /// init UI ELEMENT
     private lateinit var binding: ActivityMainBinding
