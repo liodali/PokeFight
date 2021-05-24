@@ -20,6 +20,7 @@ import dali.hamza.domain.models.PokemonWithGeoPoint
 import dali.hamza.pokemongofight.R
 import dali.hamza.pokemongofight.common.toGeoPoint
 import dali.hamza.pokemongofight.databinding.FragmentExploreBinding
+import dali.hamza.pokemongofight.ui.activity.DetailPokemonActivity
 import dali.hamza.pokemongofight.viewmodels.ExploreViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -191,6 +192,11 @@ class ExploreFragment : Fragment() {
                                     requireContext().theme
                                 )
                                 it.setOnMarkerClickListener { marker, mapView ->
+                                    DetailPokemonActivity.openDetailPokemonActivityWithArgs(
+                                        requireContext(),
+                                        DetailPokemonActivity.keyTypeDetail to resources.getStringArray(R.array.types_detail_poke).first(),
+                                        DetailPokemonActivity.keyPoke to pokemon
+                                    )
                                     true
                                 }
                             }
