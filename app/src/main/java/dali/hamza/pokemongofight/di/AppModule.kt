@@ -5,7 +5,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dali.hamza.core.datasource.network.AuthorizationApi
 import dali.hamza.core.datasource.network.ClientApi
+import dali.hamza.core.utilities.SessionManager
 import dali.hamza.pokemongofight.R
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -16,6 +18,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideSessionManager(application: Application): SessionManager {
+        return SessionManager(application)
+    }
+
     @Provides
     fun provideBaseUrl(application: Application) = application.getString(R.string.serverUrl)
 
@@ -42,6 +51,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideClientApi(retrofit: Retrofit) = retrofit.create(ClientApi::class.java)
+    fun provideClientApi(retrofit: Retrofit): ClientApi = retrofit.create(ClientApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAuthorizationApi(retrofit: Retrofit): AuthorizationApi = retrofit.create(AuthorizationApi::class.java)
 
 }

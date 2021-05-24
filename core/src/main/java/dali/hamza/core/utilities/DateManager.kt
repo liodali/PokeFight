@@ -24,31 +24,45 @@ object DateManager {
         return calendar.time
     }
 
-    fun difference2Date(d1: Date, d2: Date = now()): String {
+    fun difference2Date(d1: Date, d2: Date = now()): DateExpiration {
         val diff: Long = d2.time - d1.time
         val seconds = diff / 1000
         val minutes = seconds / 60
         val hours = minutes / 60
         val days = hours / 24
-
-
-        return when {
+        return DateExpiration(
+            days = days.toInt(),
+            hours = hours.toInt(),
+            minutes = minutes.toInt(),
+            seconds = seconds.toInt(),
+        )
+/*
+        when {
             days > 1 -> {
-                return  dateFormat_full.format(Date(diff))
+                //  return  dateFormat_full.format(Date(diff))
+                return "Date" to d1.time
             }
             else -> {
                 if (hours in 1..23) {
-                    return "${hours.toInt()}h ago"
+                    return "hours" to hours
+                    //return "${hours.toInt()}h ago"
                 }
                 if (minutes in 0..59) {
-                    return "${minutes.toInt()}min ago"
+                    return "minutes" to minutes
+                    //return "${minutes.toInt()}min ago"
                 }
-                if (seconds in 2..59) {
-                    return "${seconds.toInt()}second ago"
-                }
-                "now"
+                return "seconds" to seconds
             }
         }
+
+ */
     }
 
 }
+
+data class DateExpiration(
+    val days: Int,
+    val hours: Int,
+    val minutes: Int,
+    val seconds: Int,
+)

@@ -16,7 +16,8 @@ class DateTest {
         val date = calendar.time
         val diffMessage = DateManager.difference2Date(date)
 
-        assert(diffMessage == "1min ago")
+        assert(diffMessage.minutes == 1)
+
 
     }
 }
