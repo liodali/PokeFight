@@ -1,10 +1,12 @@
 package dali.hamza.core.repository
 
 import dali.hamza.core.datasource.network.ClientApi
+import dali.hamza.core.utilities.SessionManager
 import dali.hamza.core.utilities.toPokemonWithGeoPoint
 import dali.hamza.domain.models.*
 import dali.hamza.domain.repository.IPokemonRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import okio.IOException
 import retrofit2.Response
@@ -58,6 +60,8 @@ class PokemonRepository
 
     ) : IPokemonRepository {
 
+    @Inject
+    lateinit var sessionManager: SessionManager
 
     override suspend fun getRandomPokemonLocationFlow(
         userGeoPoint: PokeGeoPoint
@@ -89,7 +93,20 @@ class PokemonRepository
     }
 
     override suspend fun getCommunityPokemonFlow(): Flow<IResponse> {
-        TODO("Not yet implemented")
+        return flow {
+            val token = sessionManager.getTokenFromDataStore.first()
+            val response = api.getCommunityListPokemon(
+                authorization = token
+            ).data { m ->
+                m.map {
+                    Community(
+                        name = it.key,
+                        listUserPokemon = it.value
+                    )
+                }
+            }
+            emit(response)
+        }
     }
 
     override suspend fun getOneFlow(id: Int): Flow<IResponse> {
