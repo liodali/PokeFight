@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface IPokemonRepository : IBaseRepository<Pokemon> {
 
     suspend fun getRandomPokemonLocationFlow(
-        currentLocation: PokeGeoPoint,
+        userGeoPoint: PokeGeoPoint
     ): Flow<IResponse>
 
     suspend fun getAllFlow(filter: String): Flow<IResponse>

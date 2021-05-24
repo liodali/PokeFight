@@ -7,10 +7,19 @@
     <string name="text_label_community">Community</string>
     <string name="text_label_explore">Explore</string>
 
+    <string name="wild_type">Wild</string>
+    <string name="captured_type">Captured</string>
+    <string name="captured_by_friend">Captured by friend</string>
+
     <string-array name="tabs_names">
         <item>@string/text_label_explore</item>
         <item>@string/text_label_community</item>
         <item>@string/text_label_my_team</item>
         <item>@string/text_label_captured</item>
+    </string-array>
+    <string-array name="types_detail_poke">
+        <item>@string/wild_type</item>
+        <item>@string/captured_type</item>
+        <item>@string/captured_by_friend</item>
     </string-array>
 </resources>
