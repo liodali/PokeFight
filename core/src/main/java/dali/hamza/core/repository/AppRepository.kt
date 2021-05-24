@@ -19,12 +19,21 @@ class AppRepository @Inject constructor(
     lateinit var sessionManager: SessionManager
 
     override suspend fun checkTokenValidity(): Boolean {
+        /**
+         * check if token exist or not
+         */
+        if (sessionManager.getTokenFromDataStore.first().isEmpty()) {
+            return false
+        }
+        /**
+         * check if token valid or not
+         */
         val expired = sessionManager.getExpirationFromDataStore.first()
         val date = DateManager.difference2Date(Date(expired))
         if (date.minutes < 45 && date.hours < 1) {
-            return false
+            return true
         }
-        return true
+        return false
     }
 
     override suspend fun grantAuthorizationToken(email: String) {
@@ -41,5 +50,4 @@ class AppRepository @Inject constructor(
         }
     }
 
-    override suspend fun getToken(): Flow<String> = sessionManager.getTokenFromDataStore
 }
