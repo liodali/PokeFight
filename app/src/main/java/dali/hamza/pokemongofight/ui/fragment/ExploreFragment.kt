@@ -118,8 +118,14 @@ class ExploreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        gpsProvider = GpsMyLocationProvider(requireActivity())
+        locationNewOverlay = MyLocationNewOverlay(gpsProvider, map)
+        locationNewOverlay.enableMyLocation()
+        locationNewOverlay.enableFollowLocation()
 
         map.overlays.add(pokemonFolderMarkers)
+        map.overlays.add(locationNewOverlay)
+
         permission.launch(
             Manifest.permission.ACCESS_FINE_LOCATION
         )
@@ -133,10 +139,9 @@ class ExploreFragment : Fragment() {
     }
 
 
-
     override fun onResume() {
         super.onResume()
-        if(!map.isAttachedToWindow){
+        if (!map.isAttachedToWindow) {
             map.onAttachedToWindow()
         }
         val tileProvider =
@@ -145,19 +150,7 @@ class ExploreFragment : Fragment() {
         tileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler)
         map.tileProvider = tileProvider
         map.onResume()
-        gpsProvider = GpsMyLocationProvider(requireActivity())
-        locationNewOverlay = MyLocationNewOverlay(gpsProvider, map)
-        map.overlays.add(locationNewOverlay)
-        locationNewOverlay.onResume()
-        if (!map.overlays.contains(pokemonFolderMarkers)) {
-            pokemonFolderMarkers = FolderOverlay().also {
-                it.name = "pokmensPosition"
-            }
-            permission.launch(
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-            map.overlays.add(pokemonFolderMarkers)
-        }
+
     }
 
 
