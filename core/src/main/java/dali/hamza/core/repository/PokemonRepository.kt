@@ -1,6 +1,7 @@
 package dali.hamza.core.repository
 
 import dali.hamza.core.datasource.network.ClientApi
+import dali.hamza.core.utilities.toPokemonWithGeoPoint
 import dali.hamza.domain.models.*
 import dali.hamza.domain.repository.IPokemonRepository
 import kotlinx.coroutines.flow.Flow
@@ -10,26 +11,42 @@ import retrofit2.Response
 import javax.inject.Inject
 import kotlin.random.Random
 
-inline fun <T : Any> Response<T>.onSuccess(action: (T) -> Unit): Response<T> {
+inline fun <T : Any> Response<T>.onSuccess(
+    action: (T) -> Unit
+): Response<T> {
     if (isSuccessful) body()?.run(action)
     return this
 }
 
-inline fun <T : Any> Response<T>.onFailure(action: (PokeError) -> Unit) {
-    if (!isSuccessful) errorBody()?.run { action(PokeError(message())) }
+inline fun <T : Any> Response<T>.onFailure(
+    action: (PokeError) -> Unit
+) {
+    if (!isSuccessful) errorBody()?.run {
+        action(PokeError(message()))
+    }
 }
 
-fun <T : Any> Response<T>.data(): MyResponse<T> {
+fun <T : Any, R : Any> Response<T>.data(
+    mapTo: (T) -> R
+): MyResponse<R> {
     try {
         onSuccess {
-            return MyResponse.SuccessResponse(it)
+            return MyResponse.SuccessResponse(mapTo(it))
         }
-        onFailure { return MyResponse.ErrorResponse(it) }
-        return MyResponse.ErrorResponse(PokeError("GENERAL_NETWORK_ERROR"))
+        onFailure {
+            return MyResponse.ErrorResponse(it)
+        }
+        return MyResponse.ErrorResponse(
+            error = PokeError("GENERAL_NETWORK_ERROR")
+        )
     } catch (e1: IOException) {
-        return MyResponse.ErrorResponse(NetworkError("GENERAL_NETWORK_ERROR"))
+        return MyResponse.ErrorResponse(
+            error = NetworkError("GENERAL_NETWORK_ERROR")
+        )
     } catch (e: Exception) {
-        return MyResponse.ErrorResponse(PokeError(e.fillInStackTrace().message))
+        return MyResponse.ErrorResponse(
+            error = PokeError(e.fillInStackTrace().message)
+        )
     }
 
 }
@@ -42,15 +59,23 @@ class PokemonRepository
     ) : IPokemonRepository {
 
 
-    override suspend fun getRandomPokemonLocationFlow(): Flow<IResponse> {
-        val offset = Random(100).nextInt(0,5)
-        val limit = Random(10).nextInt(10,60)
+    override suspend fun getRandomPokemonLocationFlow(
+        userGeoPoint: PokeGeoPoint
+    ): Flow<IResponse> {
+        val offset = Random(100).nextInt(0, 5)
+        val limit = Random(10).nextInt(10, 60)
         return flow {
             val response = api.getListPokemonFomPokeApi(
-                url="https://pokeapi.co/api/v2/pokemon",
+                url = "https://pokeapi.co/api/v2/pokemon",
                 offset = offset,
                 limit = limit
-            ).data()
+            ).data {
+                it.map { p ->
+                    p.toPokemonWithGeoPoint(
+                        userGeoPoint
+                    )
+                }
+            }
             emit(response)
         }
     }
