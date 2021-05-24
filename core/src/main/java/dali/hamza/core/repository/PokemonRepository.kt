@@ -54,7 +54,7 @@ fun <T : Any, R : Any> Response<T>.data(
 
 class PokemonRepository
 @Inject constructor(
-    private val api: ClientApi,
+    var api: ClientApi,
 
     ) : IPokemonRepository {
 
@@ -66,15 +66,15 @@ class PokemonRepository
         val limit = Random(10).nextInt(10, 60)
         return flow {
             val response = api.getListPokemonFomPokeApi(
-                url = "https://pokeapi.co/api/v2/pokemon",
+                url = "https://pokeapi.co/api/v2/pokemon/",
                 offset = offset,
                 limit = limit
             ).data {
-                it.map { p ->
+                it.results.map { p ->
                     p.toPokemonWithGeoPoint(
                         userGeoPoint
                     )
-                }
+                }.shuffled()
             }
             emit(response)
         }

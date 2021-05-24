@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dali.hamza.core.datasource.network.ClientApi
 import dali.hamza.pokemongofight.R
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -26,8 +27,8 @@ object AppModule {
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .build()
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         BASE_URL: String,
@@ -38,4 +39,9 @@ object AppModule {
             .client(okHttpClient)
             .addConverterFactory(moshiConverter)
             .build()
+
+    @Provides
+    @Singleton
+    fun provideClientApi(retrofit: Retrofit) = retrofit.create(ClientApi::class.java)
+
 }

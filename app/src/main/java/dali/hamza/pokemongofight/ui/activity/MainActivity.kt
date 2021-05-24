@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         MainPagerAdapter(this)
     }
 
-    val pagerCallback = object : ViewPager2.OnPageChangeCallback() {
+    private val pagerCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageScrolled(
             position: Int,
             positionOffset: Float,
@@ -45,6 +45,10 @@ class MainActivity : AppCompatActivity() {
         ) {
             super.onPageScrolled(position, positionOffset, positionOffsetPixels)
             selectedIndex = position
+            when (selectedIndex) {
+                0 -> rootPager.isUserInputEnabled = false
+                else -> rootPager.isUserInputEnabled = true
+            }
         }
     }
 
@@ -69,7 +73,6 @@ class MainActivity : AppCompatActivity() {
         rootPager.currentItem = selectedIndex
 
 
-
     }
 
     override fun onDestroy() {
@@ -87,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             // Otherwise, select the previous step.
             rootPager.currentItem = selectedIndex - 1
-
         }
     }
 
@@ -104,26 +106,19 @@ class MainActivity : AppCompatActivity() {
                     ExploreFragment.key,
                     exploreFragment
                 )
-        if (supportFragmentManager.fragments
-                .contains(communityFragment)
-        )
+        if (supportFragmentManager.fragments.contains(communityFragment))
             supportFragmentManager.putFragment(
                 Bundle(),
                 CommunityFragment.key,
                 communityFragment
             )
-        if (supportFragmentManager.fragments
-                .contains(myTeamFragment)
-        )
-
+        if (supportFragmentManager.fragments.contains(myTeamFragment))
             supportFragmentManager.putFragment(
                 Bundle(),
                 MyTeamFragment.key,
                 myTeamFragment
             )
-        if (supportFragmentManager.fragments
-                .contains(capturedFragment)
-        )
+        if (supportFragmentManager.fragments.contains(capturedFragment))
             supportFragmentManager.putFragment(
                 Bundle(),
                 CapturedFragment.key,
@@ -136,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         tabLayout = binding.idmMainTabLayout
         rootPager.adapter = adapterPager
 
-
+        rootPager.offscreenPageLimit = 4
     }
 
     private fun viewPageManageFrags(savedInstanceState: Bundle?) {
@@ -157,10 +152,14 @@ class MainActivity : AppCompatActivity() {
                 )
             )
 
+
         } else {
             selectedIndex = savedInstanceState.getInt("selectedIndex", 0)
-
-            exploreFragment = supportFragmentManager.fragments.first() as ExploreFragment
+            when (selectedIndex) {
+                0 -> rootPager.isUserInputEnabled = false
+                else -> rootPager.isUserInputEnabled = true
+            }
+            exploreFragment = ExploreFragment.newInstance()
             communityFragment = supportFragmentManager.fragments[1] as CommunityFragment
             myTeamFragment = supportFragmentManager.fragments[2] as MyTeamFragment
             capturedFragment = supportFragmentManager.fragments.last() as CapturedFragment

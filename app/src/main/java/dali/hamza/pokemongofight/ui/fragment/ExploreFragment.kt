@@ -1,6 +1,7 @@
 package dali.hamza.pokemongofight.ui.fragment
 
 import android.Manifest
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,12 +9,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
+import dali.hamza.domain.models.IResponse
+import dali.hamza.domain.models.MyResponse
+import dali.hamza.domain.models.PokemonWithGeoPoint
+import dali.hamza.pokemongofight.R
+import dali.hamza.pokemongofight.common.toGeoPoint
 import dali.hamza.pokemongofight.databinding.FragmentExploreBinding
+import dali.hamza.pokemongofight.viewmodels.ExploreViewModel
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
@@ -24,6 +36,8 @@ import org.osmdroid.tileprovider.util.SimpleInvalidationHandler
 
 import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.FolderOverlay
+import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import kotlin.math.cos
@@ -45,7 +59,11 @@ class ExploreFragment : Fragment() {
 
     private lateinit var map: MapView
     private lateinit var locationNewOverlay: MyLocationNewOverlay
-
+    private var pokemonFolderMarkers: FolderOverlay = FolderOverlay().also {
+        it.name = "pokmensPosition"
+    }
+    private val viewModel: ExploreViewModel by viewModels()
+    private var gpsProvider: GpsMyLocationProvider? = null
 
     /**
      * request permission for gps and localisation
@@ -55,18 +73,19 @@ class ExploreFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             when (isGranted) {
                 true -> {
-                    locationNewOverlay.enableMyLocation()
                     locationNewOverlay.runOnFirstFix {
                         val geoP = locationNewOverlay.myLocation
                         lifecycleScope.launch(Main) {
                             map.controller.animateTo(geoP)
                             map.controller.setZoom(15.0)
+                            withContext(IO) {
+                                viewModel.exploreListPokemon(geoP)
+                            }
 
                         }
                         // locationNewOverlay.disableMyLocation()
                     }
-                    locationNewOverlay.enableFollowLocation()
-
+                    //locationNewOverlay.enableFollowLocation()
                 }
                 else -> {
                     //TODO show dialog
@@ -88,80 +107,119 @@ class ExploreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        binding = FragmentExploreBinding.inflate(inflater, container, false)
-        map = binding.mapView
+        //binding = FragmentExploreBinding.inflate(inflater, container, false)
+        map = MapView(requireActivity())
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.isTilesScaledToDpi = true
         map.setMultiTouchControls(true)
         map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-        return binding.root
+        return map
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        locationNewOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), map)
+
+        map.overlays.add(pokemonFolderMarkers)
         permission.launch(
             Manifest.permission.ACCESS_FINE_LOCATION
         )
-
+        lifecycleScope.launchWhenStarted {
+            viewModel.getListPokemon().collect { response ->
+                if (response != null) {
+                    pokemonListDataManipulation(response = response)
+                }
+            }
+        }
     }
+
+
 
     override fun onResume() {
         super.onResume()
+        if(!map.isAttachedToWindow){
+            map.onAttachedToWindow()
+        }
         val tileProvider =
             MapTileProviderBasic(requireContext().applicationContext, TileSourceFactory.MAPNIK)
         val mTileRequestCompleteHandler = SimpleInvalidationHandler(map)
         tileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler)
         map.tileProvider = tileProvider
         map.onResume()
-        if (locationNewOverlay.isFollowLocationEnabled) {
-            locationNewOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), map)
-            locationNewOverlay.enableMyLocation()
-            locationNewOverlay.enableFollowLocation()
-        }
+        gpsProvider = GpsMyLocationProvider(requireActivity())
+        locationNewOverlay = MyLocationNewOverlay(gpsProvider, map)
         map.overlays.add(locationNewOverlay)
-
+        locationNewOverlay.onResume()
+        if (!map.overlays.contains(pokemonFolderMarkers)) {
+            pokemonFolderMarkers = FolderOverlay().also {
+                it.name = "pokmensPosition"
+            }
+            permission.launch(
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            map.overlays.add(pokemonFolderMarkers)
+        }
     }
 
 
     override fun onPause() {
-        super.onPause()
-        map.overlays.remove(locationNewOverlay)
+        locationNewOverlay.disableMyLocation()
+        locationNewOverlay.onPause()
         map.onPause()
+        super.onPause()
+        //locationNewOverlay.disableMyLocation()
 
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (locationNewOverlay.isFollowLocationEnabled) {
-            locationNewOverlay.disableFollowLocation()
-        }
-        if (locationNewOverlay.isMyLocationEnabled) {
-            locationNewOverlay.disableMyLocation()
-        }
     }
 
     override fun onDetach() {
-        super.onDetach()
         map.onDetach()
+        super.onDetach()
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
         map.tileProvider = null
     }
 
-    private fun createPokemonPosition(){
+    private suspend fun pokemonListDataManipulation(response: IResponse) {
+        when (response) {
+            is MyResponse.SuccessResponse<*> -> {
+                val pokemons: List<PokemonWithGeoPoint> =
+                    response.data as List<PokemonWithGeoPoint>
+                withContext(IO) {
+                    pokemons.forEach { pokemon ->
+                        pokemonFolderMarkers.add(
+                            Marker(map).also {
+                                it.position = pokemon.pokeGeoPoint.toGeoPoint()
+                                it.setInfoWindow(null)
+                                it.icon = ResourcesCompat.getDrawable(
+                                    resources,
+                                    R.drawable.ic_location_pokemon,
+                                    requireContext().theme
+                                )
+                                it.setOnMarkerClickListener { marker, mapView ->
+                                    true
+                                }
+                            }
+                        )
+                    }
+                }
+                if (map.overlays.contains(pokemonFolderMarkers)) {
+                    map.overlays.remove(pokemonFolderMarkers)
+                    map.overlays.add(pokemonFolderMarkers)
+                    map.invalidate()
+                }
+            }
+            else -> {
 
+            }
+        }
     }
-
-
 
 
     companion object {
         const val key = "exploreFrag"
 
-        @JvmStatic
         fun newInstance() =
             ExploreFragment().apply {
                 arguments = Bundle()

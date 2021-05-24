@@ -1,5 +1,6 @@
 package dali.hamza.core.datasource.network
 
+import dali.hamza.core.datasource.network.models.BaseListPokemonResponse
 import dali.hamza.core.utilities.PokemonApiData
 import dali.hamza.domain.models.Pokemon
 import retrofit2.Response
@@ -14,16 +15,17 @@ interface ClientApi {
     suspend fun getToken(
        @Query("email") email: String
     ): Response<String>
+
     @Headers(
         "Content-Type: application/json; charset=utf-8",
         "Accept:application/json",
     )
-    @GET("activity")
+    @GET
     suspend fun getListPokemonFomPokeApi(
         @Url url: String,
         @Query("offset") offset:Int,
         @Query("limit") limit:Int,
-    ): Response<List<PokemonApiData>>
+    ): Response<BaseListPokemonResponse>
 
     @Headers(
         "Content-Type: application/json; charset=utf-8",

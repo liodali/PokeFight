@@ -8,7 +8,7 @@ fun PokemonApiData.toPokemonWithGeoPoint(
 ): PokemonWithGeoPoint {
     val len = this.url.split("/").size
     return PokemonWithGeoPoint(
-        id = this.url.split("/")[len - 1].toInt(),
+        id = this.url.split("/")[len - 2].toInt(),
         name = name,
         url = url,
         pokeGeoPoint = getLocationInLatLngRad(
