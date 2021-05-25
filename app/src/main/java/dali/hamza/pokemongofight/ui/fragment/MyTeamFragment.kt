@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,6 +18,7 @@ import dali.hamza.pokemongofight.common.gone
 import dali.hamza.pokemongofight.common.visible
 import dali.hamza.pokemongofight.databinding.EmptyBinding
 import dali.hamza.pokemongofight.databinding.FragmentMyTeamBinding
+import dali.hamza.pokemongofight.ui.activity.DetailPokemonActivity
 import dali.hamza.pokemongofight.ui.adapter.MyTeamListAdapter
 import dali.hamza.pokemongofight.viewmodels.MyTeamViewModel
 import kotlinx.coroutines.flow.collect
@@ -78,11 +80,20 @@ class MyTeamFragment : Fragment(), MyTeamListAdapter.MyTeamItemCallback {
         lifecycleScope.launchWhenStarted {
             viewModel.getFlowCommunityPokemon().collect { response ->
                 if (response != null) {
+                    if (swipeRefreshList.isRefreshing) {
+                        swipeRefreshList.isRefreshing = false
+                    }
                     buildUI(response)
-                    swipeRefreshList.visible()
-                    loadingView.gone()
+                    if (!swipeRefreshList.isVisible && loadingView.isVisible) {
+                        swipeRefreshList.visible()
+                        loadingView.gone()
+                    }
+
                 }
             }
+        }
+        swipeRefreshList.setOnRefreshListener {
+            viewModel.fetchForCommunityPokemon()
         }
         viewModel.fetchForCommunityPokemon()
     }
@@ -127,7 +138,11 @@ class MyTeamFragment : Fragment(), MyTeamListAdapter.MyTeamItemCallback {
             }
     }
 
-    override fun goToDetailPokemon(pokemon: UserPokemon, type: String) {
-        TODO("Not yet implemented")
+    override fun goToDetailPokemon(pokemon: PokemonWithGeoPoint, type: String) {
+        DetailPokemonActivity.openDetailPokemonActivityWithArgs(
+            requireContext(),
+            DetailPokemonActivity.keyMePoke to pokemon,
+            DetailPokemonActivity.keyTypeDetail to type
+        )
     }
 }

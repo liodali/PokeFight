@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewbinding.ViewBinding
+import com.squareup.picasso.Picasso
 import dali.hamza.core.utilities.DateManager
 import dali.hamza.domain.models.Community
 import dali.hamza.domain.models.Pokemon
@@ -23,9 +24,18 @@ class MyTeamListAdapter constructor(
         val action: MyTeamItemCallback
     ) : BaseAdapter.BaseViewHolder<PokemonWithGeoPoint>(bindingView) {
         override fun bind(data: PokemonWithGeoPoint) {
-                bindingView.idNamePokeMyTeam.text = data.pokemon.name
-                bindingView.idTimeCapturedMyTeam.text = bindingView.root.context.resources.getString(
-                    R.string.captured_at) + data.pokemon.captured_at
+            bindingView.idNamePokeMyTeam.text = data.pokemon.name
+            bindingView.idTimeCapturedMyTeam.text = bindingView.root.context.resources.getString(
+                R.string.captured_at
+            ) + " " + data.pokemon.captured_at
+
+            Picasso.get()
+                .load("https://pokeres.bastionbot.org/images/pokemon/${data.pokemon.id}.png")
+                .into(bindingView.idPokeImageMyTeam)
+
+            bindingView.root.setOnClickListener {
+                action.goToDetailPokemon(data,"Me")
+            }
         }
 
         companion object {
@@ -52,7 +62,7 @@ class MyTeamListAdapter constructor(
 
     interface MyTeamItemCallback {
         fun goToDetailPokemon(
-            pokemon: UserPokemon,
+            pokemon: PokemonWithGeoPoint,
             type: String,
         )
     }

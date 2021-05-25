@@ -20,6 +20,7 @@ class DetailPokemonActivity : AppCompatActivity() {
 
         const val keyTypeDetail = "keyTypePoke"
         const val keyPoke = "keyPoke"
+        const val keyMePoke = "keyMePoke"
         const val keyPokeUser = "keyPokeUser"
 
         fun openDetailPokemonActivity(packageContext: Context) {
