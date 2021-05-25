@@ -35,6 +35,9 @@ class AppRepository @Inject constructor(
          * check if token valid or not
          */
         val expired = sessionManager.getExpirationFromDataStore.first()
+        if (expired == 0L) {
+            return false
+        }
         val date = DateManager.difference2Date(Date(expired))
         if (date.minutes < 45 && date.hours < 1) {
             return true

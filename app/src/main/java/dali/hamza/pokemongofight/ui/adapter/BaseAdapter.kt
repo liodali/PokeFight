@@ -8,6 +8,27 @@ abstract class BaseAdapter<T, E : BaseAdapter.BaseViewHolder<T>>(
 ) :
     RecyclerView.Adapter<E>() {
 
+    fun addList(data: List<T>) {
+        val len = when (list.isEmpty()) {
+            true -> 0
+            else -> list.size
+        }
+
+        list.addAll(data)
+        notifyItemRangeInserted(len, data.size)
+    }
+
+    fun addListWithClear(data: List<T>) {
+        clear()
+        list.addAll(data)
+        notifyItemRangeInserted(0, data.size)
+    }
+
+    fun clear() {
+        val len = list.size
+        list.clear()
+        notifyItemRangeRemoved(0, len)
+    }
 
     abstract class BaseViewHolder<T>(val binding: ViewBinding) :
         RecyclerView.ViewHolder(binding.root) {

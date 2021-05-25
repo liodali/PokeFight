@@ -6,7 +6,14 @@ import java.util.*
 object DateManager {
 
     private var locale = Locale.getDefault()
-    val dateFormat_full = SimpleDateFormat("dd MM yyyy HH:mm", locale)
+    val dateFormat_full = SimpleDateFormat("MMMM dd,yyyy HH:mm", locale)
+    private val dateFormat_api = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss-SS:00", locale)
+
+    fun convertStringFromFormatApiToApp(date: String): Long {
+        val dateParse = dateFormat_api.parse(date)
+        return dateParse.time
+    }
+
     fun setDate(year: Int, month: Int, day: Int): Date {
 
         val calendar = Calendar.getInstance()
@@ -36,26 +43,7 @@ object DateManager {
             minutes = minutes.toInt(),
             seconds = seconds.toInt(),
         )
-/*
-        when {
-            days > 1 -> {
-                //  return  dateFormat_full.format(Date(diff))
-                return "Date" to d1.time
-            }
-            else -> {
-                if (hours in 1..23) {
-                    return "hours" to hours
-                    //return "${hours.toInt()}h ago"
-                }
-                if (minutes in 0..59) {
-                    return "minutes" to minutes
-                    //return "${minutes.toInt()}min ago"
-                }
-                return "seconds" to seconds
-            }
-        }
 
- */
     }
 
 }

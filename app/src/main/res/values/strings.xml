@@ -10,6 +10,7 @@
     <string name="wild_type">Wild</string>
     <string name="captured_type">Captured</string>
     <string name="captured_by_friend">Captured by friend</string>
+    <string name="loading">loading …</string>
 
     <string-array name="tabs_names">
         <item>@string/text_label_explore</item>
