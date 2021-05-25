@@ -33,7 +33,7 @@ data class GeoPointEntity(
 data class PokemonWithGeoPointEntity(
     @Embedded val pokemonEntity: PokemonEntity,
     @Relation(
-        entityColumn = "id",
-        parentColumn = "pokemonId"
+        entityColumn = "pokemonId",
+        parentColumn = "id"
     ) val geoPointEntity: GeoPointEntity
 )

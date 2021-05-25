@@ -96,7 +96,15 @@ class PokemonRepository
                                 it.toPokemonWithGeoPoint()
                             }))
                             false -> {
-
+                                val token = sessionManager.getTokenFromDataStore.first()
+                                val response = api.getMyTeamListPokemon(
+                                    authorization = "Bearer $token"
+                                ).data { list->
+                                    list.map { p->
+                                        p.toPokemonWithGeoPoint()
+                                    }
+                                }
+                                emit(response)
                             }
                         }
                     }

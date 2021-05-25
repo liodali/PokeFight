@@ -1,5 +1,7 @@
 package dali.hamza.core.utilities
 
+import java.lang.Exception
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -8,10 +10,14 @@ object DateManager {
     private var locale = Locale.getDefault()
     val dateFormat_full = SimpleDateFormat("MMMM dd,yyyy HH:mm", locale)
     private val dateFormat_api = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss-SS:00", locale)
+    private val dateFormat_api2 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", locale)
 
     fun convertStringFromFormatApiToApp(date: String): Long {
-        val dateParse = dateFormat_api.parse(date)
-        return dateParse.time
+        return try {
+            dateFormat_api.parse(date)!!.time
+        } catch (e: Exception) {
+            dateFormat_api2.parse(date)!!.time
+        }
     }
 
     fun setDate(year: Int, month: Int, day: Int): Date {

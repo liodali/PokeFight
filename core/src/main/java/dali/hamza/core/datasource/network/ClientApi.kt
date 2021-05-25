@@ -1,6 +1,7 @@
 package dali.hamza.core.datasource.network
 
 import dali.hamza.core.datasource.network.models.BaseListPokemonResponse
+import dali.hamza.core.datasource.network.models.MyPokemonTeamApi
 import dali.hamza.core.utilities.PokemonApiData
 import dali.hamza.domain.models.Community
 import dali.hamza.domain.models.Pokemon
@@ -40,7 +41,7 @@ interface ClientApi {
     @GET("my-team")
     suspend fun getMyTeamListPokemon(
         @Header("Authorization") authorization: String,
-    ): Response<List<Pokemon>>
+    ): Response<List<MyPokemonTeamApi>>
 
     @Headers(
         "Content-Type: application/json; charset=utf-8",

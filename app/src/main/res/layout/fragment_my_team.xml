@@ -5,10 +5,24 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.MyTeamFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/id_swipe_refresh_list_my_team"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:visibility="gone">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/id_recycler_my_team_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <include
+            android:id="@+id/id_empty_list_myteam"
+            layout="@layout/empty"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/id_loading_my_team"
+        layout="@layout/loading"/>
 
 </FrameLayout>
