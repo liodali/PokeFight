@@ -13,8 +13,6 @@ data class Pokemon(
 
 @Parcelize
 data class PokemonWithGeoPoint(
-    val id: Int,
-    val name: String,
-    val url: String,
+    val pokemon: Pokemon,
     val pokeGeoPoint: PokeGeoPoint
 ) : Parcelable
