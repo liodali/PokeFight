@@ -11,6 +11,8 @@
     <string name="captured_type">Captured</string>
     <string name="captured_by_friend">Captured by friend</string>
     <string name="loading">loading …</string>
+    <string name="ops_no_pokemon_found">Ops!No pokemon found</string>
+    <string name="captured_at">captured at</string>
 
     <string-array name="tabs_names">
         <item>@string/text_label_explore</item>
