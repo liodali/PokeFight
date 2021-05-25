@@ -18,7 +18,9 @@ import dali.hamza.domain.repository.IPokemonRepository
     ViewModelComponent::class
 )
 object AuhthorizationModule {
+
     @Provides
     fun provideAppRepository(repository: AppRepository): IAppRepository =
         repository
+
 }

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetCommunityPokemonsUseCase @Inject constructor(
-    val repository: IPokemonRepository
+    private  val repository: IPokemonRepository
 ) : FlowIResponseUseCase0 {
     override suspend fun invoke(): Flow<IResponse> = repository.getCommunityPokemonFlow()
 }

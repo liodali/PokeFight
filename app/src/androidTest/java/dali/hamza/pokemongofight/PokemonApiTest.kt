@@ -16,7 +16,7 @@ import javax.inject.Inject
 class PokemonApiTest {
 
     private val api = Retrofit.Builder()
-        .baseUrl( "https://pokeapi.co/api/v2/pokemon/")
+        .baseUrl("https://pokeapi.co/api/v2/pokemon/")
         .addConverterFactory(MoshiConverterFactory.create())
         .build()
         .create(ClientApi::class.java)
@@ -31,6 +31,14 @@ class PokemonApiTest {
             "https://pokeapi.co/api/v2/pokemon/",
             10,
             1000,
+        )
+        print(response)
+    }
+
+    @Test
+    fun getCommunityPokemonListTest() = runBlocking {
+        val response = api.getCommunityListPokemon(
+            ""
         )
         print(response)
     }

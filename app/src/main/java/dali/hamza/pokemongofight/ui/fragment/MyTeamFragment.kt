@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.hilt.android.AndroidEntryPoint
 import dali.hamza.pokemongofight.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -17,6 +18,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [MyTeamFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 class MyTeamFragment : Fragment() {
 
 

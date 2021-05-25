@@ -57,8 +57,7 @@ fun <T : Any, R : Any> Response<T>.data(
 class PokemonRepository
 @Inject constructor(
     var api: ClientApi,
-
-    ) : IPokemonRepository {
+) : IPokemonRepository {
 
     @Inject
     lateinit var sessionManager: SessionManager

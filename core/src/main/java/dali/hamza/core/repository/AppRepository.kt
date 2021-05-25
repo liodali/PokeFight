@@ -10,13 +10,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 
 class AppRepository @Inject constructor(
-    var api: AuthorizationApi
+    @Named("AuthorizationApi") var api: AuthorizationApi,
 ) : IAppRepository {
 
     @Inject
     lateinit var sessionManager: SessionManager
+
+
+//    @Inject
+//    @Named("EmailUser")
+//    lateinit var EmailUser: String
 
     override suspend fun checkTokenValidity(): Boolean {
         /**
@@ -36,8 +42,8 @@ class AppRepository @Inject constructor(
         return false
     }
 
-    override suspend fun grantAuthorizationToken(email: String) {
-        val token = api.getToken(email).data {
+    override suspend fun grantAuthorizationToken() {
+        val token = api.getToken("hamza.mohamedali93@gmail.com").data {
             it
         }
         when (token) {

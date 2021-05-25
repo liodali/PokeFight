@@ -12,6 +12,7 @@ import dali.hamza.pokemongofight.R
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -27,6 +28,10 @@ object AppModule {
 
     @Provides
     fun provideBaseUrl(application: Application) = application.getString(R.string.serverUrl)
+
+//    @Provides
+//    @Named("EmailUser")
+//    fun provideEmailUser(application: Application) = application.getString(R.string.tokenEmail)
 
     @Provides
     fun provideMoshi(): MoshiConverterFactory = MoshiConverterFactory.create()
@@ -48,13 +53,13 @@ object AppModule {
             .client(okHttpClient)
             .addConverterFactory(moshiConverter)
             .build()
-
-    @Provides
     @Singleton
+    @Provides
     fun provideClientApi(retrofit: Retrofit): ClientApi = retrofit.create(ClientApi::class.java)
 
-    @Provides
     @Singleton
+    @Provides
+    @Named("AuthorizationApi")
     fun provideAuthorizationApi(retrofit: Retrofit): AuthorizationApi = retrofit.create(AuthorizationApi::class.java)
 
 }
