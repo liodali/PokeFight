@@ -1,11 +1,13 @@
 package dali.hamza.core.repository
 
+import dali.hamza.core.datasource.db.daos.PokemonDao
 import dali.hamza.core.datasource.network.ClientApi
 import dali.hamza.core.utilities.SessionManager
 import dali.hamza.core.utilities.toPokemonWithGeoPoint
 import dali.hamza.domain.models.*
 import dali.hamza.domain.repository.IPokemonRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import okio.IOException
@@ -57,6 +59,7 @@ fun <T, R : Any> Response<T>.data(
 class PokemonRepository
 @Inject constructor(
     var api: ClientApi,
+    var dao: PokemonDao
 ) : IPokemonRepository {
 
     @Inject
@@ -84,7 +87,22 @@ class PokemonRepository
     }
 
     override suspend fun getAllFlow(filter: String): Flow<IResponse> {
-        TODO("Not yet implemented")
+        return flow {
+            when (filter) {
+                "MyTeam" -> {
+                    dao.getPokemonWithGeoPoint().collect { list ->
+                        when (list.isNotEmpty()) {
+                            true -> emit(MyResponse.SuccessResponse(list.map {
+                                it.toPokemonWithGeoPoint()
+                            }))
+                            false -> {
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override suspend fun getAllFlow(): Flow<IResponse> {

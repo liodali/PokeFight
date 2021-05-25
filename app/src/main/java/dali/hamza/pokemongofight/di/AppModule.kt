@@ -1,10 +1,12 @@
 package dali.hamza.pokemongofight.di
 
 import android.app.Application
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dali.hamza.core.datasource.db.PokeAppDB
 import dali.hamza.core.datasource.network.AuthorizationApi
 import dali.hamza.core.datasource.network.ClientApi
 import dali.hamza.core.utilities.SessionManager
@@ -62,4 +64,10 @@ object AppModule {
     @Named("AuthorizationApi")
     fun provideAuthorizationApi(retrofit: Retrofit): AuthorizationApi = retrofit.create(AuthorizationApi::class.java)
 
+
+    @Singleton
+    @Provides
+    fun provideAppDatabase(application: Application): PokeAppDB {
+        return Room.databaseBuilder(application, PokeAppDB::class.java, "Pokemon.db").build()
+    }
 }
