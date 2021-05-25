@@ -1,32 +1,34 @@
 package dali.hamza.core.repository
 
 import dali.hamza.core.datasource.network.ClientApi
+import dali.hamza.core.utilities.SessionManager
 import dali.hamza.core.utilities.toPokemonWithGeoPoint
 import dali.hamza.domain.models.*
 import dali.hamza.domain.repository.IPokemonRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import okio.IOException
 import retrofit2.Response
 import javax.inject.Inject
 import kotlin.random.Random
 
-inline fun <T : Any> Response<T>.onSuccess(
+inline fun <T> Response<T>.onSuccess(
     action: (T) -> Unit
 ): Response<T> {
     if (isSuccessful) body()?.run(action)
     return this
 }
 
-inline fun <T : Any> Response<T>.onFailure(
+inline fun <T> Response<T>.onFailure(
     action: (PokeError) -> Unit
 ) {
     if (!isSuccessful) errorBody()?.run {
-        action(PokeError(message()))
+        action(PokeError(this.string()))
     }
 }
 
-fun <T : Any, R : Any> Response<T>.data(
+fun <T, R : Any> Response<T>.data(
     mapTo: (T) -> R
 ): MyResponse<R> {
     try {
@@ -55,9 +57,10 @@ fun <T : Any, R : Any> Response<T>.data(
 class PokemonRepository
 @Inject constructor(
     var api: ClientApi,
+) : IPokemonRepository {
 
-    ) : IPokemonRepository {
-
+    @Inject
+    lateinit var sessionManager: SessionManager
 
     override suspend fun getRandomPokemonLocationFlow(
         userGeoPoint: PokeGeoPoint
@@ -89,7 +92,24 @@ class PokemonRepository
     }
 
     override suspend fun getCommunityPokemonFlow(): Flow<IResponse> {
-        TODO("Not yet implemented")
+        return flow {
+            val token = sessionManager.getTokenFromDataStore.first()
+            val response = api.getCommunityListPokemon(
+                authorization = "Bearer $token"
+            ).data { json ->
+                json!!.map { j ->
+                    Community(
+                        name = j.key,
+                        listUserPokemon = j.value.map { pokemonU ->
+                            pokemonU.copy(
+                                typeCommunity = j.key
+                            )
+                        }
+                    )
+                }
+            }
+            emit(response)
+        }
     }
 
     override suspend fun getOneFlow(id: Int): Flow<IResponse> {

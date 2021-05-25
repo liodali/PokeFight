@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.hilt.android.AndroidEntryPoint
 import dali.hamza.pokemongofight.R
 
 
@@ -14,6 +15,7 @@ import dali.hamza.pokemongofight.R
  * Use the [CapturedFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 class CapturedFragment : Fragment() {
 
 

@@ -3,6 +3,9 @@ package dali.hamza.domain.interactor
 import dali.hamza.domain.models.IResponse
 import kotlinx.coroutines.flow.Flow
 
+interface VoidFlowUseCase<in T> {
+    suspend operator fun invoke(parameter: T?)
+}
 
 interface FlowUseCase<in T, out R : Any> {
     suspend operator fun invoke(parameter: T?): Flow<R>

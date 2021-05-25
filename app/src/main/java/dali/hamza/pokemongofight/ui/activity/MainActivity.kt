@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             super.onPageScrolled(position, positionOffset, positionOffsetPixels)
             selectedIndex = position
             when (selectedIndex) {
-                0 -> rootPager.isUserInputEnabled = false
+                0,1 -> rootPager.isUserInputEnabled = false
                 else -> rootPager.isUserInputEnabled = true
             }
         }
@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             selectedIndex = savedInstanceState.getInt("selectedIndex", 0)
             when (selectedIndex) {
-                0 -> rootPager.isUserInputEnabled = false
+                0,1 -> rootPager.isUserInputEnabled = false
                 else -> rootPager.isUserInputEnabled = true
             }
             exploreFragment = ExploreFragment.newInstance()

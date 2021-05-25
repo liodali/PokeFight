@@ -21,4 +21,5 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("dali.hamza.core.test", appContext.packageName)
     }
+
 }
