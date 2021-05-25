@@ -7,10 +7,17 @@
     <include
         android:id="@+id/id_loading_community"
         layout="@layout/loading"/>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/id_swipe_refresh_list_community"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/id_recycler_community_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+         />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </FrameLayout>

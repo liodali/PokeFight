@@ -5,13 +5,22 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.os.bundleOf
+import dali.hamza.domain.models.Pokemon
+import dali.hamza.domain.models.UserPokemon
 import dali.hamza.pokemongofight.R
 
 class DetailPokemonActivity : AppCompatActivity() {
+
+    private var pokemon: Pokemon? = null
+    private var pokemonUser: UserPokemon? = null
+    private var typeDetail: String? = null
+
+
     companion object {
 
         const val keyTypeDetail = "keyTypePoke"
         const val keyPoke = "keyPoke"
+        const val keyPokeUser = "keyPokeUser"
 
         fun openDetailPokemonActivity(packageContext: Context) {
             val intent = Intent(packageContext, DetailPokemonActivity::class.java)
@@ -34,5 +43,9 @@ class DetailPokemonActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_pokemon)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }

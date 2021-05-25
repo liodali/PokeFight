@@ -97,10 +97,14 @@ class PokemonRepository
             val response = api.getCommunityListPokemon(
                 authorization = "Bearer $token"
             ).data { json ->
-                json!!.map {
+                json!!.map { j ->
                     Community(
-                        name = it.key,
-                        listUserPokemon = it.value
+                        name = j.key,
+                        listUserPokemon = j.value.map { pokemonU ->
+                            pokemonU.copy(
+                                typeCommunity = j.key
+                            )
+                        }
                     )
                 }
             }
