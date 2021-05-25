@@ -8,6 +8,8 @@ import dali.hamza.domain.models.UserPokemon
 import retrofit2.Response
 import retrofit2.http.*
 
+typealias CommunityJson = Map<String, List<UserPokemon>>?
+
 interface ClientApi {
 
     @Headers(
@@ -28,7 +30,7 @@ interface ClientApi {
     @GET("activity")
     suspend fun getCommunityListPokemon(
         @Header("Authorization") authorization: String,
-    ): Response<Map<String, List<UserPokemon>>>
+    ): Response<CommunityJson>
 
 
     @Headers(

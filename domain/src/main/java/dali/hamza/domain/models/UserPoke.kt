@@ -1,8 +1,8 @@
 package dali.hamza.domain.models
 
 data class UserPokemon(
-    val name:String,
     val pokemon: Pokemon,
+    val name:String,
 )
 data class Community(
     val name:String,

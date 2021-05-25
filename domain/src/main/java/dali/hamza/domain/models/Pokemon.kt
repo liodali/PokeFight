@@ -5,9 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 data class Pokemon(
     val id: Int,
-    val name: Int,
-    val url: Int,
-    val capturedDate: String? = null
+    val name: String,
+    val url: String,
+    val captured_at: String? = null
 )
 
 @Parcelize

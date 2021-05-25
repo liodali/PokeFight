@@ -13,22 +13,22 @@ import retrofit2.Response
 import javax.inject.Inject
 import kotlin.random.Random
 
-inline fun <T : Any> Response<T>.onSuccess(
+inline fun <T> Response<T>.onSuccess(
     action: (T) -> Unit
 ): Response<T> {
     if (isSuccessful) body()?.run(action)
     return this
 }
 
-inline fun <T : Any> Response<T>.onFailure(
+inline fun <T> Response<T>.onFailure(
     action: (PokeError) -> Unit
 ) {
     if (!isSuccessful) errorBody()?.run {
-        action(PokeError(message()))
+        action(PokeError(this.string()))
     }
 }
 
-fun <T : Any, R : Any> Response<T>.data(
+fun <T, R : Any> Response<T>.data(
     mapTo: (T) -> R
 ): MyResponse<R> {
     try {
@@ -95,9 +95,9 @@ class PokemonRepository
         return flow {
             val token = sessionManager.getTokenFromDataStore.first()
             val response = api.getCommunityListPokemon(
-                authorization = token
-            ).data { m ->
-                m.map {
+                authorization = "Bearer $token"
+            ).data { json ->
+                json!!.map {
                     Community(
                         name = it.key,
                         listUserPokemon = it.value
