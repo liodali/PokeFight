@@ -27,6 +27,8 @@
             android:id="@+id/id_poke_image_my_team"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:transitionName="@string/transition_hero_item_destination_name"
+
             app:layout_constraintBottom_toBottomOf="@+id/id_back_poke_image"
             app:layout_constraintEnd_toEndOf="@+id/id_back_poke_image"
             app:layout_constraintStart_toStartOf="@+id/id_back_poke_image"

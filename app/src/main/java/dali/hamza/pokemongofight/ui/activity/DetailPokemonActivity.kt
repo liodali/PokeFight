@@ -1,5 +1,6 @@
 package dali.hamza.pokemongofight.ui.activity
 
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -55,6 +56,19 @@ class DetailPokemonActivity : AppCompatActivity() {
             intent.putExtras(bundle)
             packageContext.startActivity(intent)
         }
+
+        fun openDetailPokemonActivityWithArgsAndHeroAnimation(
+            packageContext: Context,
+            activityOptions: ActivityOptions,
+            vararg args: Pair<String, Any>
+        ) {
+            val intent = Intent(packageContext, DetailPokemonActivity::class.java)
+            val bundle = bundleOf(
+                *args
+            )
+            intent.putExtras(bundle)
+            packageContext.startActivity(intent, activityOptions.toBundle())
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,7 +103,7 @@ class DetailPokemonActivity : AppCompatActivity() {
 
             }
             intent.extras!!.containsKey(keyMePoke) -> {
-                pokemonGeoPoint = intent.extras!!.get(keyPokeUser) as PokemonWithGeoPoint?
+                pokemonGeoPoint = intent.extras!!.get(keyMePoke) as PokemonWithGeoPoint?
                 pokemon = pokemonGeoPoint!!.pokemon
                 pokeGeoPoint = pokemonGeoPoint!!.pokeGeoPoint
             }

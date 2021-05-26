@@ -38,7 +38,7 @@
                     android:layout_width="128dp"
                     android:layout_height="128dp"
                     android:layout_weight="1"
-                    android:transitionName="front_hero_detail"
+                    android:transitionName="@string/transition_hero_item_destination_name"
                     android:scaleType="fitCenter" />
 
                 <ImageView

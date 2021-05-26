@@ -1,6 +1,7 @@
 package dali.hamza.pokemongofight.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewbinding.ViewBinding
@@ -34,7 +35,11 @@ class MyTeamListAdapter constructor(
                 .into(bindingView.idPokeImageMyTeam)
 
             bindingView.root.setOnClickListener {
-                action.goToDetailPokemon(data,"Me")
+                action.goToDetailPokemonWithHeroAnimation(
+                    data,
+                    "Me",
+                    bindingView.idPokeImageMyTeam
+                )
             }
         }
 
@@ -61,9 +66,10 @@ class MyTeamListAdapter constructor(
     }
 
     interface MyTeamItemCallback {
-        fun goToDetailPokemon(
+        fun goToDetailPokemonWithHeroAnimation(
             pokemon: PokemonWithGeoPoint,
             type: String,
+            sourceAnimationHero: View
         )
     }
 }

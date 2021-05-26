@@ -1,5 +1,6 @@
 package dali.hamza.pokemongofight.ui.fragment
 
+import android.app.ActivityOptions
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -78,7 +79,7 @@ class CommunityFragment : Fragment(),
                             val communities = response.data as List<Community>
                             adapter.addListWithClear(communities)
                             swipeRefreshLayout.visible()
-                            if(swipeRefreshLayout.isRefreshing){
+                            if (swipeRefreshLayout.isRefreshing) {
                                 swipeRefreshLayout.isRefreshing = false
                             }
                         }
@@ -123,9 +124,20 @@ class CommunityFragment : Fragment(),
             }
     }
 
-    override fun goToDetailPokemon(pokemon: UserPokemon, type: String) {
-        DetailPokemonActivity.openDetailPokemonActivityWithArgs(
+    override fun goToDetailPokemonWithHeroAnimation(
+        pokemon: UserPokemon,
+        type: String,
+        sourceAnimationView: View
+    ) {
+        val options = ActivityOptions
+            .makeSceneTransitionAnimation(
+                requireActivity(),
+                sourceAnimationView,
+                resources.getString(R.string.transition_hero_item_destination_name)
+            )
+        DetailPokemonActivity.openDetailPokemonActivityWithArgsAndHeroAnimation(
             requireActivity(),
+            options,
             DetailPokemonActivity.keyPokeUser to pokemon,
             DetailPokemonActivity.keyTypeDetail to type
         )
