@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import dali.hamza.core.datasource.db.PokeAppDB
 import dali.hamza.core.datasource.network.AuthorizationApi
 import dali.hamza.core.datasource.network.ClientApi
+import dali.hamza.core.datasource.network.PokeApiClient
 import dali.hamza.core.utilities.SessionManager
 import dali.hamza.pokemongofight.R
 import okhttp3.OkHttpClient
@@ -31,9 +32,14 @@ object AppModule {
     @Provides
     fun provideBaseUrl(application: Application) = application.getString(R.string.serverUrl)
 
-//    @Provides
-//    @Named("EmailUser")
-//    fun provideEmailUser(application: Application) = application.getString(R.string.tokenEmail)
+    @Provides
+    @Named("PokeApi")
+    fun provideBaseUrlPokeApi(application: Application) =
+        application.resources.getString(R.string.poke_api_url)
+
+    @Provides
+    @Named("EmailUser")
+    fun provideEmailUser(application: Application) = application.getString(R.string.tokenEmail)
 
     @Provides
     fun provideMoshi(): MoshiConverterFactory = MoshiConverterFactory.create()
@@ -55,14 +61,42 @@ object AppModule {
             .client(okHttpClient)
             .addConverterFactory(moshiConverter)
             .build()
+
+    @Provides
+    @Singleton
+    @Named("RetrofitPokeApi")
+    fun provideRetrofitPokeApi(
+        okHttpClient: OkHttpClient,
+        @Named("PokeApi") BASE_URL_POKE_API: String,
+        moshiConverter: MoshiConverterFactory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL_POKE_API)
+            .client(okHttpClient)
+            .addConverterFactory(moshiConverter)
+            .build()
+
     @Singleton
     @Provides
-    fun provideClientApi(retrofit: Retrofit): ClientApi = retrofit.create(ClientApi::class.java)
+    fun provideClientApi(
+        retrofit: Retrofit
+    ): ClientApi = retrofit.create(ClientApi::class.java)
+
+
+    @Singleton
+    @Provides
+    fun providePokeApiClient(
+        @Named("RetrofitPokeApi")
+        retrofit: Retrofit
+    ): PokeApiClient =
+        retrofit.create(PokeApiClient::class.java)
+
 
     @Singleton
     @Provides
     @Named("AuthorizationApi")
-    fun provideAuthorizationApi(retrofit: Retrofit): AuthorizationApi = retrofit.create(AuthorizationApi::class.java)
+    fun provideAuthorizationApi(retrofit: Retrofit): AuthorizationApi =
+        retrofit.create(AuthorizationApi::class.java)
 
 
     @Singleton

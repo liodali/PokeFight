@@ -1,7 +1,9 @@
 package dali.hamza.core.repository
 
+import android.util.Log
 import dali.hamza.core.datasource.db.daos.PokemonDao
 import dali.hamza.core.datasource.network.ClientApi
+import dali.hamza.core.datasource.network.PokeApiClient
 import dali.hamza.core.utilities.SessionManager
 import dali.hamza.core.utilities.toPokemonWithGeoPoint
 import dali.hamza.domain.models.*
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.flow
 import okio.IOException
 import retrofit2.Response
 import javax.inject.Inject
+import javax.inject.Named
 import kotlin.random.Random
 
 inline fun <T> Response<T>.onSuccess(
@@ -25,8 +28,12 @@ inline fun <T> Response<T>.onSuccess(
 inline fun <T> Response<T>.onFailure(
     action: (PokeError) -> Unit
 ) {
-    if (!isSuccessful) errorBody()?.run {
-        action(PokeError(this.string()))
+    if (!isSuccessful) {
+        Log.e("error in request", "${this.raw().request.url}")
+        Log.e("code request ${this.code()}", this.errorBody()?.string() ?: "error unknown")
+        errorBody()?.run {
+            action(PokeError(this.string()))
+        }
     }
 }
 
@@ -59,6 +66,7 @@ fun <T, R : Any> Response<T>.data(
 class PokemonRepository
 @Inject constructor(
     var api: ClientApi,
+    var pokeApiClient: PokeApiClient,
     var dao: PokemonDao
 ) : IPokemonRepository {
 
@@ -71,8 +79,7 @@ class PokemonRepository
         val offset = Random(100).nextInt(0, 5)
         val limit = Random(10).nextInt(10, 60)
         return flow {
-            val response = api.getListPokemonFomPokeApi(
-                url = "https://pokeapi.co/api/v2/pokemon/",
+            val response = pokeApiClient.getListPokemonFomPokeApi(
                 offset = offset,
                 limit = limit
             ).data {
@@ -99,8 +106,8 @@ class PokemonRepository
                                 val token = sessionManager.getTokenFromDataStore.first()
                                 val response = api.getMyTeamListPokemon(
                                     authorization = "Bearer $token"
-                                ).data { list->
-                                    list.map { p->
+                                ).data { list ->
+                                    list.map { p ->
                                         p.toPokemonWithGeoPoint()
                                     }
                                 }
@@ -136,6 +143,10 @@ class PokemonRepository
             }
             emit(response)
         }
+    }
+
+    override suspend fun getInformationPokemonFlow(): Flow<IResponse> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getOneFlow(id: Int): Flow<IResponse> {

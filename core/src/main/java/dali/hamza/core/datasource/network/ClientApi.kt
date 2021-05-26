@@ -13,16 +13,8 @@ typealias CommunityJson = Map<String, List<UserPokemon>>?
 
 interface ClientApi {
 
-    @Headers(
-        "Content-Type: application/json; charset=utf-8",
-        "Accept:application/json",
-    )
-    @GET
-    suspend fun getListPokemonFomPokeApi(
-        @Url url: String,
-        @Query("offset") offset: Int,
-        @Query("limit") limit: Int,
-    ): Response<BaseListPokemonResponse>
+
+
 
     @Headers(
         "Content-Type: application/json; charset=utf-8",
