@@ -15,6 +15,5 @@ interface IPokemonRepository : IBaseRepository<Pokemon> {
 
     suspend fun getCommunityPokemonFlow(): Flow<IResponse>
 
-    suspend fun getInformationPokemonFlow(): Flow<IResponse>
 
 }

@@ -5,6 +5,7 @@ import dali.hamza.core.datasource.db.daos.PokemonDao
 import dali.hamza.core.datasource.network.ClientApi
 import dali.hamza.core.datasource.network.PokeApiClient
 import dali.hamza.core.utilities.SessionManager
+import dali.hamza.core.utilities.toDetailPokemon
 import dali.hamza.core.utilities.toPokemonWithGeoPoint
 import dali.hamza.domain.models.*
 import dali.hamza.domain.repository.IPokemonRepository
@@ -116,6 +117,17 @@ class PokemonRepository
                         }
                     }
                 }
+                else -> {
+                    val token = sessionManager.getTokenFromDataStore.first()
+                    val response = api.getMyTeamListPokemon(
+                        authorization = "Bearer $token"
+                    ).data { list ->
+                        list.map { p ->
+                            p.toPokemonWithGeoPoint()
+                        }
+                    }
+                    emit(response)
+                }
             }
         }
     }
@@ -145,12 +157,16 @@ class PokemonRepository
         }
     }
 
-    override suspend fun getInformationPokemonFlow(): Flow<IResponse> {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun getOneFlow(id: Int): Flow<IResponse> {
-        TODO("Not yet implemented")
+        return flow {
+            val response = pokeApiClient.getDetailPokemonFomPokeApi(
+                id = id
+            ).data { apiData ->
+                apiData.toDetailPokemon()
+            }
+            emit(response)
+        }
     }
 
     override suspend fun insert(entity: Pokemon): Flow<IResponse> {

@@ -16,3 +16,10 @@ data class PokemonWithGeoPoint(
     val pokemon: Pokemon,
     val pokeGeoPoint: PokeGeoPoint
 ) : Parcelable
+
+@Parcelize
+data class DetailPokemon(
+    val hp: Int,
+    val types: List<String>,
+    val moves: List<String>
+) : Parcelable

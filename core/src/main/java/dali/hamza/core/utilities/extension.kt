@@ -2,6 +2,8 @@ package dali.hamza.core.utilities
 
 import dali.hamza.core.datasource.db.entities.PokemonWithGeoPointEntity
 import dali.hamza.core.datasource.network.models.MyPokemonTeamApi
+import dali.hamza.core.datasource.network.models.PokeApiData
+import dali.hamza.domain.models.DetailPokemon
 import dali.hamza.domain.models.PokeGeoPoint
 import dali.hamza.domain.models.Pokemon
 import dali.hamza.domain.models.PokemonWithGeoPoint
@@ -58,5 +60,19 @@ fun MyPokemonTeamApi.toPokemonWithGeoPoint(): PokemonWithGeoPoint {
             lat = this.captured_lat_at,
             lon = this.captured_long_at
         )
+    )
+}
+
+fun PokeApiData.toDetailPokemon(): DetailPokemon {
+    return DetailPokemon(
+        hp = stats.first {
+            it.stat.name == "hp"
+        }.base_stat,
+        moves = moves.shuffled().subList(0, 4).map {
+            it.move.name
+        },
+        types = types.map { type ->
+            type.type.name
+        }
     )
 }
