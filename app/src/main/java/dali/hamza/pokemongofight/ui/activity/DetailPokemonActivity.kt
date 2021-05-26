@@ -1,10 +1,16 @@
 package dali.hamza.pokemongofight.ui.activity
 
 import android.app.ActivityOptions
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.animation.AnimationSet
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.content.res.ResourcesCompat
@@ -26,6 +32,8 @@ import dali.hamza.pokemongofight.common.gone
 import dali.hamza.pokemongofight.common.toGeoPoint
 import dali.hamza.pokemongofight.common.visible
 import dali.hamza.pokemongofight.databinding.ActivityDetailPokemonBinding
+import dali.hamza.pokemongofight.databinding.AddNewPokemonDialogLoadingBinding
+import dali.hamza.pokemongofight.ui.fragment.CapturePokeDialog
 import dali.hamza.pokemongofight.viewmodels.DetailPokemonViewModel
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.collect
@@ -39,7 +47,7 @@ import org.osmdroid.views.overlay.Marker
 import java.util.*
 
 @AndroidEntryPoint
-class DetailPokemonActivity : AppCompatActivity() {
+class DetailPokemonActivity : AppCompatActivity(), CapturePokeDialog.CapturePokeCallback {
 
 
     private lateinit var binding: ActivityDetailPokemonBinding
@@ -69,6 +77,8 @@ class DetailPokemonActivity : AppCompatActivity() {
 
     private val viewModel: DetailPokemonViewModel by viewModels()
 
+    private var progress_dialog: Dialog? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,24 +89,7 @@ class DetailPokemonActivity : AppCompatActivity() {
         setupUI()
 
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.detailPokemon().collect { response ->
-                if (response != null) {
-                    when (response) {
-                        is MyResponse.SuccessResponse<*> -> {
-                            val pokeDetail = response.data as DetailPokemon
-                            withContext(Main) {
-                                buildTypePokemonUI(pokeDetail.types)
-                                buildMovesPokemonUI(pokeDetail.moves)
-                            }
-                        }
-                        else -> {
 
-                        }
-                    }
-                }
-            }
-        }
 
         viewModel.retrieveDetailPoke(pokemon!!.id)
 
@@ -158,6 +151,27 @@ class DetailPokemonActivity : AppCompatActivity() {
 
         moreInformation.text =
             resources.getString(R.string.captured_at_detail, moreInfoTxt)
+
+
+        if (isWild) {
+            captureButton.visible()
+            captureButton.setOnClickListener {
+                val dialog = CapturePokeDialog.newInstance(
+                    pokemon = PokemonWithGeoPoint(
+                        pokemon = pokemon!!,
+                        pokeGeoPoint = pokeGeoPoint!!
+                    ),
+                    this
+                )
+                dialog.show(supportFragmentManager.also {
+                    val prevFrag = it.findFragmentByTag(CapturePokeDialog.tagChangePwdDialog)
+                    if (prevFrag != null) {
+                        it.beginTransaction().remove(prevFrag)
+                    }
+                    it.beginTransaction().addToBackStack(null)
+                }, CapturePokeDialog.tagChangePwdDialog)
+            }
+        }
 
         Picasso.get()
             .load("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon!!.id}.png")
@@ -270,6 +284,49 @@ class DetailPokemonActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launchWhenStarted {
+            viewModel.detailPokemon().collect { response ->
+                if (response != null) {
+                    when (response) {
+                        is MyResponse.SuccessResponse<*> -> {
+                            val pokeDetail = response.data as DetailPokemon
+                            withContext(Main) {
+                                buildTypePokemonUI(pokeDetail.types)
+                                buildMovesPokemonUI(pokeDetail.moves)
+                            }
+                        }
+                        else -> {
+
+                        }
+                    }
+                }
+            }
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.responseAddedPokemon().collect { response ->
+                if (response != null) {
+
+                    when (response) {
+                        is MyResponse.SuccessResponse<*> -> {
+                            val isAdded = response.data as Boolean
+
+                        }
+                        else -> {
+
+                        }
+                    }
+                    if (progress_dialog!!.isShowing) {
+                        progress_dialog?.dismiss()
+                        progress_dialog = null
+                    }
+                }
+            }
+        }
+    }
+
+
 
     override fun onResume() {
         super.onResume()
@@ -292,6 +349,42 @@ class DetailPokemonActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+    }
+
+
+    private fun showLoadingDialog(context: Context) {
+        if (progress_dialog != null) {
+            progress_dialog?.cancel()
+        }
+        progress_dialog = Dialog(context)
+        val binding = AddNewPokemonDialogLoadingBinding.inflate(LayoutInflater.from(context))
+        progress_dialog!!.setContentView(binding.root)
+        // load the animation
+        val animFade = AnimationUtils.loadAnimation(
+            applicationContext,
+            R.anim.fade_anim
+        )
+        val animTransition = AnimationUtils.loadAnimation(
+            applicationContext,
+            R.anim.translate_anim
+        )
+        val animShake = AnimationUtils.loadAnimation(
+            applicationContext,
+            R.anim.shake_anim
+        )
+        val anim = AnimationSet(false)
+        anim.addAnimation(animShake)
+        anim.addAnimation(animTransition)
+        binding.idPokeBallLoading.startAnimation(anim)
+        binding.idPokeBPointRed.startAnimation(animFade)
+
+        progress_dialog!!.setCancelable(false)
+        progress_dialog!!.window!!.setBackgroundDrawable(
+            ColorDrawable(Color.TRANSPARENT)
+        )
+
+        progress_dialog?.create()
+        progress_dialog?.show()
     }
 
     companion object {
@@ -330,5 +423,10 @@ class DetailPokemonActivity : AppCompatActivity() {
             intent.putExtras(bundle)
             packageContext.startActivity(intent, activityOptions.toBundle())
         }
+    }
+
+    override fun captureNewPoke(pokemonWithGeoPoint: PokemonWithGeoPoint) {
+    //    viewModel.addPokemonToMyTeam(pokemonWithGeoPoint)
+        showLoadingDialog(this)
     }
 }

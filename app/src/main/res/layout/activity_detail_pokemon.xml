@@ -247,6 +247,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:text="@string/capture"
+        android:visibility="gone"
         android:layout_marginHorizontal="8dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -1,5 +1,6 @@
 package dali.hamza.core.utilities
 
+import dali.hamza.core.datasource.db.entities.PokemonEntity
 import dali.hamza.core.datasource.db.entities.PokemonWithGeoPointEntity
 import dali.hamza.core.datasource.network.models.MyPokemonTeamApi
 import dali.hamza.core.datasource.network.models.PokeApiData
@@ -39,6 +40,24 @@ fun PokemonWithGeoPointEntity.toPokemonWithGeoPoint(): PokemonWithGeoPoint {
             lat = this.geoPointEntity.lat,
             lon = this.geoPointEntity.lon
         )
+    )
+}
+
+fun PokemonWithGeoPoint.toMyPokemonTeamApi(): MyPokemonTeamApi {
+    return MyPokemonTeamApi(
+        id = this.pokemon.id,
+        name = this.pokemon.name,
+        captured_at = "",
+        captured_lat_at = this.pokeGeoPoint.lat,
+        captured_long_at = this.pokeGeoPoint.lon,
+    )
+}
+
+fun Pokemon.toPokemonDb(): PokemonEntity {
+    return PokemonEntity(
+        id = this.id,
+        name = this.name,
+        capturedAt = DateManager.dateFormat_full.parse(this.captured_at)!!
     )
 }
 
