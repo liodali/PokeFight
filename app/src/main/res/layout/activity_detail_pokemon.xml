@@ -266,4 +266,5 @@
         app:maxImageSize="48dp"
         app:srcCompat="@drawable/ic_pokeball"
         app:tint="@null" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

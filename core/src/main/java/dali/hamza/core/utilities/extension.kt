@@ -2,8 +2,7 @@ package dali.hamza.core.utilities
 
 import dali.hamza.core.datasource.db.entities.PokemonEntity
 import dali.hamza.core.datasource.db.entities.PokemonWithGeoPointEntity
-import dali.hamza.core.datasource.network.models.MyPokemonTeamApi
-import dali.hamza.core.datasource.network.models.PokeApiData
+import dali.hamza.core.datasource.network.models.*
 import dali.hamza.domain.models.DetailPokemon
 import dali.hamza.domain.models.PokeGeoPoint
 import dali.hamza.domain.models.Pokemon
@@ -43,13 +42,14 @@ fun PokemonWithGeoPointEntity.toPokemonWithGeoPoint(): PokemonWithGeoPoint {
     )
 }
 
-fun PokemonWithGeoPoint.toMyPokemonTeamApi(): MyPokemonTeamApi {
-    return MyPokemonTeamApi(
-        id = this.pokemon.id,
-        name = this.pokemon.name,
-        captured_at = "",
-        captured_lat_at = this.pokeGeoPoint.lat,
-        captured_long_at = this.pokeGeoPoint.lon,
+fun PokemonWithGeoPoint.toMyPokemonTeamApi(): MyPokemonToSaveApi {
+    return MyPokemonToSaveApi(
+        Poke(
+            id = this.pokemon.id,
+            name = this.pokemon.name,
+            lat = this.pokeGeoPoint.lat,
+            long = this.pokeGeoPoint.lon,
+        )
     )
 }
 
@@ -57,7 +57,12 @@ fun Pokemon.toPokemonDb(): PokemonEntity {
     return PokemonEntity(
         id = this.id,
         name = this.name,
-        capturedAt = DateManager.dateFormat_full.parse(this.captured_at)!!
+        capturedAt = when (this.captured_at.isEmpty()) {
+            true -> DateManager.now()
+            else -> DateManager.dateFormat_full.parse(this.captured_at)!!
+        }
+
+
     )
 }
 

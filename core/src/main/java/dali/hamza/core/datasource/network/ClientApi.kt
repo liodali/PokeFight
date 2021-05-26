@@ -2,6 +2,7 @@ package dali.hamza.core.datasource.network
 
 import dali.hamza.core.datasource.network.models.BaseListPokemonResponse
 import dali.hamza.core.datasource.network.models.MyPokemonTeamApi
+import dali.hamza.core.datasource.network.models.MyPokemonToSaveApi
 import dali.hamza.core.utilities.PokemonApiData
 import dali.hamza.domain.models.Community
 import dali.hamza.domain.models.Pokemon
@@ -48,6 +49,6 @@ interface ClientApi {
     @POST("capture")
     suspend fun addPokemonToMyTeam(
         @Header("Authorization") authorization: String,
-        @Body pokemonTeamApi: MyPokemonTeamApi
+        @Body pokemonToSaveApi: MyPokemonToSaveApi
     ): Response<Map<String, Boolean>>
 }

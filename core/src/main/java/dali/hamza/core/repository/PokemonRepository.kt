@@ -8,10 +8,12 @@ import dali.hamza.core.datasource.network.PokeApiClient
 import dali.hamza.core.utilities.*
 import dali.hamza.domain.models.*
 import dali.hamza.domain.repository.IPokemonRepository
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import okio.IOException
 import retrofit2.Response
 import javax.inject.Inject
@@ -166,15 +168,27 @@ class PokemonRepository @Inject constructor(
             }
             when (response.data!!) {
                 true -> {
-                    dao.insert(entity.pokemon.toPokemonDb())
-                    dao.insertDetailPokemon(
-                        GeoPointEntity(
-                            pokemonId = entity.pokemon.id,
-                            lon = entity.pokeGeoPoint.lon,
-                            lat = entity.pokeGeoPoint.lat
+                    try {
+                        withContext(IO){
+                            dao.insert(entity.pokemon.toPokemonDb())
+                            dao.insertDetailPokemon(
+                                GeoPointEntity(
+                                    pokemonId = entity.pokemon.id,
+                                    lon = entity.pokeGeoPoint.lon,
+                                    lat = entity.pokeGeoPoint.lat
+                                )
+                            )
+                        }
+                        emit(MyResponse.SuccessResponse(data = true))
+                    } catch (e: Exception) {
+                        Log.e("error save in database",e.message!!)
+                        emit(
+                            MyResponse.ErrorResponse<Any>(
+                                error =
+                                PokeError("failed to capture the pokemon")
+                            )
                         )
-                    )
-                    emit(MyResponse.SuccessResponse(data = true))
+                    }
                 }
                 else -> {
                     emit(

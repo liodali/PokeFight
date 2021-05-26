@@ -34,10 +34,14 @@ import dali.hamza.pokemongofight.common.visible
 import dali.hamza.pokemongofight.databinding.ActivityDetailPokemonBinding
 import dali.hamza.pokemongofight.databinding.AddNewPokemonDialogLoadingBinding
 import dali.hamza.pokemongofight.ui.fragment.CapturePokeDialog
+import dali.hamza.pokemongofight.ui.fragment.GotchUpPokeDialog
 import dali.hamza.pokemongofight.viewmodels.DetailPokemonViewModel
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
+import nl.dionsegijn.konfetti.KonfettiView
+import nl.dionsegijn.konfetti.models.Shape
+import nl.dionsegijn.konfetti.models.Size
 import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler
@@ -311,7 +315,11 @@ class DetailPokemonActivity : AppCompatActivity(), CapturePokeDialog.CapturePoke
                     when (response) {
                         is MyResponse.SuccessResponse<*> -> {
                             val isAdded = response.data as Boolean
-
+                            if(isAdded){
+                                captureButton.gone()
+                                pokeBall.visible()
+                                showGotupPokemon()
+                            }
                         }
                         else -> {
 
@@ -326,6 +334,20 @@ class DetailPokemonActivity : AppCompatActivity(), CapturePokeDialog.CapturePoke
         }
     }
 
+
+   private fun showGotupPokemon(){
+       val dialog = GotchUpPokeDialog.newInstance(
+           pokemon = pokemon!!
+
+       )
+       dialog.show(supportFragmentManager.also {
+           val prevFrag = it.findFragmentByTag(GotchUpPokeDialog.tagChangePwdDialog)
+           if (prevFrag != null) {
+               it.beginTransaction().remove(prevFrag)
+           }
+           it.beginTransaction().addToBackStack(null)
+       }, GotchUpPokeDialog.tagChangePwdDialog)
+   }
 
 
     override fun onResume() {
@@ -378,7 +400,7 @@ class DetailPokemonActivity : AppCompatActivity(), CapturePokeDialog.CapturePoke
         binding.idPokeBallLoading.startAnimation(anim)
         binding.idPokeBPointRed.startAnimation(animFade)
 
-        progress_dialog!!.setCancelable(false)
+        progress_dialog!!.setCancelable(true)
         progress_dialog!!.window!!.setBackgroundDrawable(
             ColorDrawable(Color.TRANSPARENT)
         )
@@ -426,7 +448,7 @@ class DetailPokemonActivity : AppCompatActivity(), CapturePokeDialog.CapturePoke
     }
 
     override fun captureNewPoke(pokemonWithGeoPoint: PokemonWithGeoPoint) {
-    //    viewModel.addPokemonToMyTeam(pokemonWithGeoPoint)
+        viewModel.addPokemonToMyTeam(pokemonWithGeoPoint)
         showLoadingDialog(this)
     }
 }

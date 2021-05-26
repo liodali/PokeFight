@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailPokemonViewModel @Inject constructor(
+    private val checkTokenValidationUseCase: CheckTokenValidationUseCase,
     private val capturePokemonUseCase: CapturePokemonUseCase,
     private val detailPokemonUseCase: DetailPokemonUseCase,
 ) : ViewModel() {
@@ -48,7 +49,8 @@ class DetailPokemonViewModel @Inject constructor(
     }
 
     fun addPokemonToMyTeam(pokemonWithGeoPoint: PokemonWithGeoPoint) {
-        viewModelScope.launch {
+        viewModelScope.launch(IO) {
+            checkTokenValidationUseCase.invoke(null)
             capturePokemonUseCase.invoke(pokemonWithGeoPoint)
                 .catch {
                     mutableFlowAddedPokemon.value =
