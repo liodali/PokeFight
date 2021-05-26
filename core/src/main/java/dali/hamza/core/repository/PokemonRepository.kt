@@ -2,11 +2,10 @@ package dali.hamza.core.repository
 
 import android.util.Log
 import dali.hamza.core.datasource.db.daos.PokemonDao
+import dali.hamza.core.datasource.db.entities.GeoPointEntity
 import dali.hamza.core.datasource.network.ClientApi
 import dali.hamza.core.datasource.network.PokeApiClient
-import dali.hamza.core.utilities.SessionManager
-import dali.hamza.core.utilities.toDetailPokemon
-import dali.hamza.core.utilities.toPokemonWithGeoPoint
+import dali.hamza.core.utilities.*
 import dali.hamza.domain.models.*
 import dali.hamza.domain.repository.IPokemonRepository
 import kotlinx.coroutines.flow.Flow
@@ -64,8 +63,7 @@ fun <T, R : Any> Response<T>.data(
 }
 
 
-class PokemonRepository
-@Inject constructor(
+class PokemonRepository @Inject constructor(
     var api: ClientApi,
     var pokeApiClient: PokeApiClient,
     var dao: PokemonDao
@@ -157,6 +155,39 @@ class PokemonRepository
         }
     }
 
+    override suspend fun insert(entity: PokemonWithGeoPoint): Flow<IResponse> {
+        return flow {
+            val token = sessionManager.getTokenFromDataStore.first()
+            val response = api.addPokemonToMyTeam(
+                "Bearer $token",
+                entity.toMyPokemonTeamApi()
+            ).data {
+                it.values.first()
+            }
+            when (response.data!!) {
+                true -> {
+                    dao.insert(entity.pokemon.toPokemonDb())
+                    dao.insertDetailPokemon(
+                        GeoPointEntity(
+                            pokemonId = entity.pokemon.id,
+                            lon = entity.pokeGeoPoint.lon,
+                            lat = entity.pokeGeoPoint.lat
+                        )
+                    )
+                    emit(MyResponse.SuccessResponse(data = true))
+                }
+                else -> {
+                    emit(
+                        MyResponse.ErrorResponse<Any>(
+                            error =
+                            PokeError("failed to capture the pokemon")
+                        )
+                    )
+                }
+            }
+        }
+    }
+
 
     override suspend fun getOneFlow(id: Int): Flow<IResponse> {
         return flow {
@@ -170,10 +201,10 @@ class PokemonRepository
     }
 
     override suspend fun insert(entity: Pokemon): Flow<IResponse> {
-        TODO("Not yet implemented")
+        throw Exception("Cannot use this method")
     }
 
     override suspend fun delete(entity: Pokemon) {
-        TODO("Not yet implemented")
+        throw Exception("Cannot use this method")
     }
 }

@@ -13,9 +13,6 @@ typealias CommunityJson = Map<String, List<UserPokemon>>?
 
 interface ClientApi {
 
-
-
-
     @Headers(
         "Content-Type: application/json; charset=utf-8",
         "Accept:application/json",
@@ -43,4 +40,14 @@ interface ClientApi {
     suspend fun getCapturedListPokemon(
         @Header("Authorization") authorization: String,
     ): Response<List<Pokemon>>
+
+    @Headers(
+        "Content-Type: application/json; charset=utf-8",
+        "Accept:application/json",
+    )
+    @POST("capture")
+    suspend fun addPokemonToMyTeam(
+        @Header("Authorization") authorization: String,
+        @Body pokemonTeamApi: MyPokemonTeamApi
+    ): Response<Map<String, Boolean>>
 }
