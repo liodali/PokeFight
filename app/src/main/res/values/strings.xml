@@ -18,6 +18,11 @@
 
 
     <string name="poke_api_url">https://pokeapi.co/api/v2/</string>
+    <string name="basic_info">Basic Info</string>
+    <string name="types">types :</string>
+    <string name="captured_at_detail">Captured at %s</string>
+    <string name="moves_pokemon_label_info">Moves</string>
+    <string name="capture">capture</string>
 
     <string-array name="tabs_names">
         <item>@string/text_label_explore</item>

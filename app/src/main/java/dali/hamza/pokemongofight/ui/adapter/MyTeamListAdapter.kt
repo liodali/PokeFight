@@ -3,20 +3,14 @@ package dali.hamza.pokemongofight.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewbinding.ViewBinding
 import com.squareup.picasso.Picasso
-import dali.hamza.core.utilities.DateManager
-import dali.hamza.domain.models.Community
-import dali.hamza.domain.models.Pokemon
 import dali.hamza.domain.models.PokemonWithGeoPoint
-import dali.hamza.domain.models.UserPokemon
 import dali.hamza.pokemongofight.R
-import dali.hamza.pokemongofight.databinding.ItemListCommunityPokemonBinding
 import dali.hamza.pokemongofight.databinding.ItemPokmenMyTeamBinding
 
+
 class MyTeamListAdapter constructor(
-    val action: MyTeamItemCallback
+   private  val action: MyTeamItemCallback
 ) : BaseAdapter<PokemonWithGeoPoint, MyTeamListAdapter.ItemViewHolder>() {
 
     /// viewHolder
@@ -42,7 +36,6 @@ class MyTeamListAdapter constructor(
                 )
             }
         }
-
         companion object {
             fun create(
                 parent: ViewGroup,
@@ -57,6 +50,7 @@ class MyTeamListAdapter constructor(
             }
         }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder.create(
