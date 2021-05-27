@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dali.hamza.core.interactors.CheckTokenValidationUseCase
+import dali.hamza.core.interactors.GetCapturedPokemonUseCase
 import dali.hamza.core.interactors.GetCommunityPokemonsUseCase
 import dali.hamza.core.interactors.GetMyTeamPokemonUseCase
 import dali.hamza.domain.models.IResponse
@@ -19,27 +20,27 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MyTeamViewModel @Inject constructor(
+class CapturedViewModel @Inject constructor(
     private val checkTokenValidationUseCase: CheckTokenValidationUseCase,
-    private val getMyTeamPokemonsUseCase: GetMyTeamPokemonUseCase
+    private val getMyCapturedPokemonUseCase: GetCapturedPokemonUseCase
 ) : ViewModel() {
 
 
-    private val mutableFlowMyTeam: MutableStateFlow<IResponse?> = MutableStateFlow(null)
-    private val flowMyTeam: StateFlow<IResponse?> = mutableFlowMyTeam
+    private val mutableFlowCaptured: MutableStateFlow<IResponse?> = MutableStateFlow(null)
+    private val flowMyTeam: StateFlow<IResponse?> = mutableFlowCaptured
 
-    fun getFlowMyTeamPokemon() = flowMyTeam
+    fun getFlowCapturedPokemon() = flowMyTeam
 
-    fun fetchForMyTeamPokemon() {
+    fun fetchForCapturedPokemon() {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.IO) {
                 checkTokenValidationUseCase.invoke(null)
             }
-            getMyTeamPokemonsUseCase.invoke()
+            getMyCapturedPokemonUseCase.invoke()
                 .catch {
 
                 }.collect { response ->
-                    mutableFlowMyTeam.value = response
+                    mutableFlowCaptured.value = response
                 }
 
         }

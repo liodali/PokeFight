@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardElevation="2dp"
+    >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="2dp">
+        <ImageView
+            android:id="@+id/id_poke_bg_ite_captured"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_pokeball" />
+
+        <ImageView
+            android:id="@+id/id_poke_captured_item"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:adjustViewBounds="false"
+            android:layout_margin="3dp"
+            android:transitionName="@string/transition_hero_item_destination_name"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center" />
+    </FrameLayout>
+</com.google.android.material.card.MaterialCardView>

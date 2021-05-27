@@ -5,10 +5,23 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.CapturedFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/id_swipe_refresh_list_captured"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="fragCaptured" />
+        android:visibility="gone">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/id_recycler_captured_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <include
+            android:id="@+id/id_empty_list_captured"
+            layout="@layout/empty"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/id_loading_captured"
+        layout="@layout/loading"/>
 
 </FrameLayout>
