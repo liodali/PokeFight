@@ -79,7 +79,7 @@ class MyTeamFragment : Fragment(), MyTeamListAdapter.MyTeamItemCallback {
             )
 
         lifecycleScope.launchWhenStarted {
-            viewModel.getFlowCommunityPokemon().collect { response ->
+            viewModel.getFlowMyTeamPokemon().collect { response ->
                 if (response != null) {
                     if (swipeRefreshList.isRefreshing) {
                         swipeRefreshList.isRefreshing = false
@@ -94,9 +94,9 @@ class MyTeamFragment : Fragment(), MyTeamListAdapter.MyTeamItemCallback {
             }
         }
         swipeRefreshList.setOnRefreshListener {
-            viewModel.fetchForCommunityPokemon()
+            viewModel.fetchForMyTeamPokemon()
         }
-        viewModel.fetchForCommunityPokemon()
+        viewModel.fetchForMyTeamPokemon()
     }
 
     private fun buildUI(response: IResponse) {

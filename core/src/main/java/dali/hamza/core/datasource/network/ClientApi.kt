@@ -40,7 +40,7 @@ interface ClientApi {
     @GET("captured")
     suspend fun getCapturedListPokemon(
         @Header("Authorization") authorization: String,
-    ): Response<List<Pokemon>>
+    ): Response<List<MyPokemonTeamApi>>
 
     @Headers(
         "Content-Type: application/json; charset=utf-8",
