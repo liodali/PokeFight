@@ -29,11 +29,11 @@ inline fun <T> Response<T>.onSuccess(
 
 inline fun <T> Response<T>.onFailure(
     action: (PokeError) -> Unit
-) {
+){
     if (!isSuccessful) {
         Log.e("error in request", "${this.raw().request.url}")
         Log.e("code request ${this.code()}", this.errorBody()?.string() ?: "error unknown")
-        errorBody()?.run {
+         errorBody()?.run {
             action(PokeError(this.string()))
         }
     }
