@@ -1,6 +1,10 @@
 # PokemonGoApp
 > Android application build it  with kotlin that find and collect pokemons
 
+## Build
+* should use Android Studio 2020.3.1 canary 13 or above (beta 1 or 2)
+
+
 
 ##### In this project, we implement the  clean architecture
 * we have 3 layer:
