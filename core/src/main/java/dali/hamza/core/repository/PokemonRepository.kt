@@ -96,39 +96,37 @@ class PokemonRepository @Inject constructor(
 
     override suspend fun getAllFlow(filter: String): Flow<IResponse> {
         return flow {
-            when (filter) {
-                "MyTeam" -> {
-                    dao.getPokemonWithGeoPoint().collect { list ->
-                        when (list.isNotEmpty()) {
-                            true -> emit(MyResponse.SuccessResponse(list.map {
-                                it.toPokemonWithGeoPoint()
-                            }))
-                            false -> {
-                                val token = sessionManager.getTokenFromDataStore.first()
-                                val response = api.getMyTeamListPokemon(
+            dao.getPokemonWithGeoPoint().collect { list ->
+                when (list.isNotEmpty()) {
+                    true -> emit(MyResponse.SuccessResponse(list.map {
+                        it.toPokemonWithGeoPoint()
+                    }))
+                    false -> {
+                        val token = sessionManager.getTokenFromDataStore.first()
+                        val response = when (filter) {
+                            "MyTeam" ->
+                                api.getMyTeamListPokemon(
                                     authorization = "Bearer $token"
                                 ).data { list ->
                                     list.map { p ->
                                         p.toPokemonWithGeoPoint()
                                     }
                                 }
-                                emit(response)
-                            }
+                            else ->
+                                api.getCapturedListPokemon(
+                                    authorization = "Bearer $token"
+                                ).data { list ->
+                                    list.map { p ->
+                                        p.toPokemonWithGeoPoint()
+                                    }
+                                }
                         }
+                        emit(response)
+
                     }
-                }
-                else -> {
-                    val token = sessionManager.getTokenFromDataStore.first()
-                    val response = api.getMyTeamListPokemon(
-                        authorization = "Bearer $token"
-                    ).data { list ->
-                        list.map { p ->
-                            p.toPokemonWithGeoPoint()
-                        }
-                    }
-                    emit(response)
                 }
             }
+
         }
     }
 
@@ -169,7 +167,7 @@ class PokemonRepository @Inject constructor(
             when (response.data!!) {
                 true -> {
                     try {
-                        withContext(IO){
+                        withContext(IO) {
                             dao.insert(entity.pokemon.toPokemonDb())
                             dao.insertDetailPokemon(
                                 GeoPointEntity(
@@ -181,7 +179,7 @@ class PokemonRepository @Inject constructor(
                         }
                         emit(MyResponse.SuccessResponse(data = true))
                     } catch (e: Exception) {
-                        Log.e("error save in database",e.message!!)
+                        Log.e("error save in database", e.message!!)
                         emit(
                             MyResponse.ErrorResponse<Any>(
                                 error =
