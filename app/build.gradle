@@ -32,7 +32,7 @@ android {
             //resValue 'string', 'serverUrl', '"https://planets.datenkollektiv.de/planets/"'
         }
         debug {
-            resValue 'string', 'serverUrl',  properties.getProperty("serverUrl", "")
+            resValue 'string', 'serverUrl', properties.getProperty("serverUrl", "")
             resValue 'string', 'tokenEmail', properties.getProperty("tokenEmail", "")
         }
     }
@@ -43,7 +43,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
     }
 }
@@ -101,7 +101,6 @@ dependencies {
     implementation 'nl.dionsegijn:konfetti:1.3.2'
 
 
-
     //fragment ktx
     implementation "androidx.fragment:fragment-ktx:1.3.4"
     // Activity KTX for viewModels()
@@ -125,7 +124,8 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.3.0'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.3.0'
     // For Robolectric tests.
     testImplementation 'com.google.dagger:hilt-android-testing:2.35'
     // ...with Kotlin.
