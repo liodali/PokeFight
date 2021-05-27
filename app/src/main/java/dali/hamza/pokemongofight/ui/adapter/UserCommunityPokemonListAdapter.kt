@@ -1,6 +1,7 @@
 package dali.hamza.pokemongofight.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.viewbinding.ViewBinding
@@ -35,9 +36,10 @@ class UserCommunityPokemonListAdapter constructor(
                 .into(bindingView.idImagePokemon)
 
             bindingView.root.setOnClickListener {
-                action.goToDetailPokemon(
+                action.goToDetailPokemonWithHeroAnimation(
                     pokemon = data,
-                    type = data.typeCommunity
+                    type = data.typeCommunity,
+                    animatedView = bindingView.idImagePokemon
                 )
             }
 
@@ -67,9 +69,10 @@ class UserCommunityPokemonListAdapter constructor(
     }
 
     interface UserCommunityCallback {
-        fun goToDetailPokemon(
+        fun goToDetailPokemonWithHeroAnimation(
             pokemon: UserPokemon,
             type: String,
+            animatedView: View
         )
     }
 }

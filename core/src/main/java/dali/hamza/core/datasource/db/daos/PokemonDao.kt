@@ -1,8 +1,11 @@
 package dali.hamza.core.datasource.db.daos
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
+import dali.hamza.core.datasource.db.entities.GeoPointEntity
 import dali.hamza.core.datasource.db.entities.PokemonEntity
 import dali.hamza.core.datasource.db.entities.PokemonWithGeoPointEntity
 import kotlinx.coroutines.flow.Flow
@@ -21,5 +24,8 @@ interface PokemonDao : AppDao<PokemonEntity> {
     @Query("select * from pokemon p , pokemongeopoint g where  p.id==g.pokemonId")
     fun getPokemonWithGeoPoint(): Flow<List<PokemonWithGeoPointEntity>>
 
+
+    @Insert(entity = GeoPointEntity::class,onConflict = REPLACE)
+    fun insertDetailPokemon(entity: GeoPointEntity)
 
 }

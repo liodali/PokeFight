@@ -2,6 +2,7 @@ package dali.hamza.core.datasource.network
 
 import dali.hamza.core.datasource.network.models.BaseListPokemonResponse
 import dali.hamza.core.datasource.network.models.MyPokemonTeamApi
+import dali.hamza.core.datasource.network.models.MyPokemonToSaveApi
 import dali.hamza.core.utilities.PokemonApiData
 import dali.hamza.domain.models.Community
 import dali.hamza.domain.models.Pokemon
@@ -12,17 +13,6 @@ import retrofit2.http.*
 typealias CommunityJson = Map<String, List<UserPokemon>>?
 
 interface ClientApi {
-
-    @Headers(
-        "Content-Type: application/json; charset=utf-8",
-        "Accept:application/json",
-    )
-    @GET
-    suspend fun getListPokemonFomPokeApi(
-        @Url url: String,
-        @Query("offset") offset: Int,
-        @Query("limit") limit: Int,
-    ): Response<BaseListPokemonResponse>
 
     @Headers(
         "Content-Type: application/json; charset=utf-8",
@@ -51,4 +41,14 @@ interface ClientApi {
     suspend fun getCapturedListPokemon(
         @Header("Authorization") authorization: String,
     ): Response<List<Pokemon>>
+
+    @Headers(
+        "Content-Type: application/json; charset=utf-8",
+        "Accept:application/json",
+    )
+    @POST("capture")
+    suspend fun addPokemonToMyTeam(
+        @Header("Authorization") authorization: String,
+        @Body pokemonToSaveApi: MyPokemonToSaveApi
+    ): Response<Map<String, Boolean>>
 }

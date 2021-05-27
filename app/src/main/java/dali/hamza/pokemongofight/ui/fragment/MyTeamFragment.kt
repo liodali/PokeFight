@@ -1,5 +1,6 @@
 package dali.hamza.pokemongofight.ui.fragment
 
+import android.app.ActivityOptions
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -138,9 +139,20 @@ class MyTeamFragment : Fragment(), MyTeamListAdapter.MyTeamItemCallback {
             }
     }
 
-    override fun goToDetailPokemon(pokemon: PokemonWithGeoPoint, type: String) {
-        DetailPokemonActivity.openDetailPokemonActivityWithArgs(
+    override fun goToDetailPokemonWithHeroAnimation(
+        pokemon: PokemonWithGeoPoint,
+        type: String,
+        sourceAnimationHero: View
+    ) {
+        val options = ActivityOptions
+            .makeSceneTransitionAnimation(
+                requireActivity(),
+                sourceAnimationHero,
+                resources.getString(R.string.transition_hero_item_destination_name)
+            )
+        DetailPokemonActivity.openDetailPokemonActivityWithArgsAndHeroAnimation(
             requireContext(),
+            options,
             DetailPokemonActivity.keyMePoke to pokemon,
             DetailPokemonActivity.keyTypeDetail to type
         )
